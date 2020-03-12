@@ -3,10 +3,13 @@ import sys
 import csv
 import numpy as np
 import pandas as pd
+import math
+
+inf = math.inf
 
 args = sys.argv
 
-def graph1D(imgcsv, setting, smin, smax, output, omin, omax):
+def graph1D(imgcsv, setting, output, smin=-inf, smax=inf, omin=-inf, omax=inf):
     '''
     Generates a scatter plot showing relationship between one setting var and one output var
     '''
