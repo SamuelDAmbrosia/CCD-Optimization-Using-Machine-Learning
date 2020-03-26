@@ -26,11 +26,12 @@ def generate_combo(imgdf, VCKDIRN, ITGTIME, VIDGAIN, PRETIME, POSTIME, DGWIDTH, 
     
     DCarr = imgdf['DC']
     CTarr = imgdf['dSdskip']
-    Noarr = imgdf['skNoise']
+    SNarr = imgdf['skNoise']
+    INarr = imgdf['imgNoise']
     
     #Generate correlation matrix from a dataframe for the linear combos and the output variables
     
-    corr = pd.DataFrame(np.array([comboarr, Noarr, CTarr, DCarr]).transpose(), columns = ['combo', 'skNoise', 'dSdskip', 'DC']).corr()
+    corr = pd.DataFrame(np.array([comboarr, SNarr, INarr, CTarr, DCarr]).transpose(), columns = ['combo', 'skNoise', 'imgNoise', 'dSdskip', 'DC']).corr()
     
     #specify how the plot should look
     
