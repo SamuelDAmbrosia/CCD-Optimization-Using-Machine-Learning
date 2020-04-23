@@ -131,8 +131,8 @@ def main(directory):
                     try:
                         if(ImgForm.match(image)):
                             writer.writerow(imageToDict(filepath))
-                    except RuntimeError:
-                        print("RuntimeError on image: " + subdir + "/" + image)
+                    except:
+                        print("Error on image: " + subdir + "/" + image)
                 
     
 #Check correct formatting for input directory
