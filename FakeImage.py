@@ -1,6 +1,8 @@
+import os
 import numpy as np
 from astropy.nddata import CCDData
 from astropy.nddata import fits_ccddata_writer
+import astropy.io.fits as fits
 import sys
 import matplotlib.pyplot as plt
 
@@ -83,3 +85,44 @@ def interact_Img():
     
     return interactive_output(img_hist, {"sig" : sig_s, "lam" : lam_s, "ADU" : ADU_s, "binss" : bin_s})
 
+def gen_data(dirname, imgNum, hdrmin, hdrmax, sigmin, sigmax):
+    '''
+    Generates a directory of fake images for processing
+    '''
+    
+    #Create directory (if it doesnt already exist)
+    try:
+        os.mkdir(dirname)
+    except:
+        print("Directory in place.")
+    
+    for i in range(imgNum):
+        
+        #initialize image header variables and name image
+        hdr = fits.Header()
+
+        hdr['imgName'] = 'TestImg_' + str(i)
+
+        hds = ['NDCMS', 'EXP', 'AMPL', 'HCKDIRN', 'VCKDIRN', 'ITGTIME', 'VIDGAIN', 'PRETIME', 'POSTIME', 'DGWIDTH', 'RGWIDTH', 'OGWIDTH', 'SWWIDTH', 'HWIDTH', 'HOWIDTH', 'VWIDTH', 'VOWIDTH', 'ONEVCKHI', 'ONEVCKLO', 'TWOVCKHI', 'TWOVCKLO', 'TGHI', 'TGLO', 'HUHI', 'HULO', 'HLHI', 'HLLO', 'RGHI', 'RGLO', 'SWLO', 'DGHI', 'DGLO', 'OGHI', 'OGLO', 'BATTR', 'VDD1', 'VDD2', 'DRAIN1', 'DRAIN2', 'VREF1', 'VREF2', 'OPG1', 'OPG2']
+
+        #Allocate dumby header values
+        for hd in hds:
+
+            hdr[hd] = 0
+        
+        #Allocate 'relevant' header values
+        hdr['NDCMS']= 1
+        hdr['OGLO'] = i*((hdrmax-hdrmin)/imgNum)
+        
+        #Splice together header and fits data
+        hdu = fits.PrimaryHDU(np.asarray(generate_Image(sigmin + i*((sigmax-sigmin)/imgNum),.5,9)), header=hdr)
+
+        hdul = fits.HDUList([hdu])
+
+        #Write to fits file, making sure it doesn't already exist
+        try:
+            hdul.writeto(dirname+'/Img_'+str(i)+'.fits')
+        except:
+            print('Img_'+str(i)+" Exists")
+    
+    
