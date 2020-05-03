@@ -14,8 +14,6 @@ import readFits
 import lmfit
 
 #Formatting for directories and images
-CCDFull = re.compile("UW\\d{4}S")
-CCDDay = re.compile("\\d{4}-\\d{2}-\\d{2}")
 ImgForm = re.compile("Img_\\d+.fits")
 
 def imageToDict(filepath):
@@ -114,8 +112,6 @@ def main(directory):
         #iterate through all files in the specified directory and its subdirectories
         
         for subdir, dirs, files in os.walk(directory):
-            
-            print(directory)
         
             #use a progress bar for each directory being re
         
