@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import PoissonGausFit as poisgaus 
 from scipy.stats import rv_continuous
 import scipy
+from tqdm import tqdm
 
 from IPython.display import display
 from ipywidgets import interactive_output, fixed, FloatSlider, IntSlider, HBox
@@ -96,33 +97,43 @@ def gen_data(dirname, imgNum, hdrmin, hdrmax, sigmin, sigmax):
     except:
         print("Directory in place.")
     
-    for i in range(imgNum):
-        
-        #initialize image header variables and name image
-        hdr = fits.Header()
+    with tqdm(total = imgNum) as pbar:
+        for i in range(imgNum):
 
-        hdr['imgName'] = 'TestImg_' + str(i)
+            #initialize image header variables and name image
+            hdr = fits.Header()
 
-        hds = ['NDCMS', 'EXP', 'AMPL', 'HCKDIRN', 'VCKDIRN', 'ITGTIME', 'VIDGAIN', 'PRETIME', 'POSTIME', 'DGWIDTH', 'RGWIDTH', 'OGWIDTH', 'SWWIDTH', 'HWIDTH', 'HOWIDTH', 'VWIDTH', 'VOWIDTH', 'ONEVCKHI', 'ONEVCKLO', 'TWOVCKHI', 'TWOVCKLO', 'TGHI', 'TGLO', 'HUHI', 'HULO', 'HLHI', 'HLLO', 'RGHI', 'RGLO', 'SWLO', 'DGHI', 'DGLO', 'OGHI', 'OGLO', 'BATTR', 'VDD1', 'VDD2', 'DRAIN1', 'DRAIN2', 'VREF1', 'VREF2', 'OPG1', 'OPG2']
+            hdr['imgName'] = 'TestImg_' + str(i)
 
-        #Allocate dumby header values
-        for hd in hds:
+            hds = ['NDCMS', 'EXP', 'AMPL', 'HCKDIRN', 'VCKDIRN', 'ITGTIME', 'VIDGAIN', 'PRETIME', 'POSTIME', 'DGWIDTH', 'RGWIDTH', 'OGWIDTH', 'SWWIDTH', 'HWIDTH', 'HOWIDTH', 'VWIDTH', 'VOWIDTH', 'ONEVCKHI', 'ONEVCKLO', 'TWOVCKHI', 'TWOVCKLO', 'TGHI', 'TGLO', 'HUHI', 'HULO', 'HLHI', 'HLLO', 'RGHI', 'RGLO', 'SWLO', 'DGHI', 'DGLO', 'OGHI', 'OGLO', 'BATTR', 'VDD1', 'VDD2', 'DRAIN1', 'DRAIN2', 'VREF1', 'VREF2', 'OPG1', 'OPG2']
 
-            hdr[hd] = 0
-        
-        #Allocate 'relevant' header values
-        hdr['NDCMS']= 1
-        hdr['OGLO'] = i*((hdrmax-hdrmin)/imgNum)
-        
-        #Splice together header and fits data
-        hdu = fits.PrimaryHDU(np.asarray(generate_Image(sigmin + i*((sigmax-sigmin)/imgNum),.5,9)), header=hdr)
+            #Allocate dumby header values
+            for hd in hds:
 
-        hdul = fits.HDUList([hdu])
+                hdr[hd] = 0
 
-        #Write to fits file, making sure it doesn't already exist
-        try:
-            hdul.writeto(dirname+'/Img_'+str(i)+'.fits')
-        except:
-            print('Img_'+str(i)+" Exists")
-    
+            #Allocate 'relevant' header values
+            hdr['NDCMS']= 200
+            hdr['OGLO'] = (0.8)*i*((hdrmax-hdrmin)/imgNum)
+            hdr['VREF1']= -9+(0.5)*i*((hdrmax-hdrmin)/imgNum)
+            hdr['VREF2']= -9+(0.5)*i*((hdrmax-hdrmin)/imgNum)
+            if(i<50):
+                hdr['SWLO'] = (0.01)*i*i*((hdrmax-hdrmin)/imgNum)
+            else:
+                hdr['SWLO'] = 25
+
+
+            #Splice together header and fits data
+            hdu = fits.PrimaryHDU(np.asarray(generate_Image(sigmin + i*((sigmax-sigmin)/imgNum),.5,9)), header=hdr)
+
+            hdul = fits.HDUList([hdu])
+
+            #Write to fits file, making sure it doesn't already exist
+            try:
+                hdul.writeto(dirname+'/Img_'+str(i)+'.fits')
+            except:
+                print('Img_'+str(i)+" Exists")
+                
+            pbar.update(1)
+
     

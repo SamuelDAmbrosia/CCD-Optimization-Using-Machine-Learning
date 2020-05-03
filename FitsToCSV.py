@@ -142,10 +142,9 @@ try:
     if not (os.path.isdir(directory)):
         print("Cannot find directory!")
         assert(os.path.isdir(directory))
-    assert(CCDFull.match(os.path.basename(directory)) or CCDDay.match(os.path.basename(directory)))
     main(sys.argv[1])
 except AssertionError:
-    print("Directory must have format UW****S or 20**-**-**")
+    print("Error reading directory")
 except IndexError:
     print("Please input a directory")
     

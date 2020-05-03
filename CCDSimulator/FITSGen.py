@@ -4,10 +4,8 @@
 
 import Parameters
 import numpy as np 
-import scipy
 from astropy.io import fits
 import sys
-from scipy.stats import poisson
 
 
 import matplotlib.pyplot as plt
