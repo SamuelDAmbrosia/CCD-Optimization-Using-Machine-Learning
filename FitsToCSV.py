@@ -129,8 +129,7 @@ def main(directory):
                     pbar.update(1)
 
                     try:
-                        if(ImgForm.match(image)):
-                            writer.writerow(imageToDict(filepath))
+                        writer.writerow(imageToDict(filepath))
                     except:
                         print("Error on image: " + subdir + "/" + image)
                 
